@@ -1,22 +1,20 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Fraunces } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const display = Fraunces({
-  variable: "--font-display",
+const sans = Inter({
+  variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
 });
 
-const body = Bricolage_Grotesque({
-  variable: "--font-body",
+const mono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
   title: "LinkedIn Banner Studio",
-  description: "Generate a LinkedIn banner with presets and live editing.",
+  description: "Generate a SaaS aesthetic LinkedIn banner in seconds.",
 };
 
 export default function RootLayout({
@@ -27,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${display.variable} ${body.variable} font-sans antialiased`}
+        className={`${sans.variable} ${mono.variable} font-sans antialiased bg-zinc-50 text-zinc-900`}
       >
         {children}
       </body>

@@ -5,7 +5,6 @@ import { toPng } from "html-to-image";
 import BannerPreview from "@/components/banner-preview";
 import { presets } from "@/lib/presets";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -82,414 +81,215 @@ export default function Home() {
     };
 
     updateScale();
-    const observer = new ResizeObserver(updateScale);
-    observer.observe(previewRef.current);
-    return () => observer.disconnect();
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#f7f3ed] text-zinc-900">
-      <div className="relative overflow-hidden">
-        <div className="absolute -left-24 top-[-120px] h-64 w-64 rounded-full bg-[#f6d7b8] blur-[90px]" />
-        <div className="absolute right-[-80px] top-12 h-72 w-72 rounded-full bg-[#f3c6a5] blur-[110px]" />
-        <div className="mx-auto max-w-6xl px-6 py-16">
-          <div className="flex flex-col gap-6">
-            <div className="inline-flex w-fit items-center gap-3 rounded-full border border-black/10 bg-white/70 px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-zinc-600">
-              Banner Studio
-            </div>
-            <div className="flex flex-col gap-3">
-              <h1 className="font-display text-4xl font-semibold tracking-tight text-zinc-900 md:text-5xl">
-                LinkedIn Banner Generator
-              </h1>
-              <p className="max-w-2xl text-base leading-relaxed text-zinc-600">
-                Pick a preset, fine-tune your details, and export a 1584 x 396
-                banner built for the exact LinkedIn aspect ratio.
-              </p>
-            </div>
+    <div className="min-h-screen bg-zinc-50 text-zinc-900 selection:bg-zinc-900 selection:text-white pb-32">
+      {/* Navbar */}
+      <nav className="border-b border-zinc-200 bg-white/50 backdrop-blur-md sticky top-0 z-50">
+        <div className="mx-auto max-w-[1400px] flex items-center justify-between px-6 h-14">
+          <div className="font-mono text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+            <div className="w-4 h-4 bg-zinc-900 rounded-sm" />
+            Banner Studio
+          </div>
+          <div className="flex gap-4 items-center">
+            <a href="https://github.com" target="_blank" className="text-xs font-mono text-zinc-500 hover:text-zinc-900 transition-colors">GitHub</a>
+            <Button size="sm" className="h-8 rounded-md bg-zinc-900 text-white hover:bg-zinc-800 font-mono text-xs" onClick={() => document.getElementById("generator")?.scrollIntoView({ behavior: "smooth" })}>
+              Start Generating
+            </Button>
           </div>
         </div>
-      </div>
+      </nav>
 
-      <div className="mx-auto max-w-6xl px-6 pb-20">
-        <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
-          <Card className="border-black/10 bg-white/80 p-6 shadow-[0_25px_70px_-60px_rgba(15,23,42,0.45)]">
-            <div className="flex flex-col gap-5">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">
-                  Preset
-                </p>
-                <Select value={selectedPreset} onValueChange={setSelectedPreset}>
-                  <SelectTrigger className="mt-3 w-full">
-                    <SelectValue placeholder="Choose preset" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {presets.map((item) => (
-                      <SelectItem key={item.id} value={item.id}>
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="mt-2 text-xs text-zinc-500">{preset.description}</p>
-              </div>
+      {/* Hero */}
+      <section className="relative overflow-hidden border-b border-zinc-200 bg-white">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+        <div className="relative mx-auto max-w-5xl px-6 py-32 text-center flex flex-col items-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-[11px] font-mono font-medium text-zinc-600 mb-8">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            Vercel Ready
+          </div>
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-zinc-900 leading-[1.1] mb-6 max-w-4xl">
+            Create your SaaS aesthetic <br className="hidden md:block"/> LinkedIn banner in seconds.
+          </h1>
+          <p className="max-w-xl text-lg text-zinc-500 mb-10">
+            A developer-focused tool to generate pixel-perfect, bold, and minimal LinkedIn banners. No design skills required.
+          </p>
+          <Button size="lg" className="rounded-full bg-zinc-900 text-white hover:bg-zinc-800 font-mono text-sm px-8" onClick={() => document.getElementById("generator")?.scrollIntoView({ behavior: "smooth" })}>
+            Build Your Banner
+          </Button>
+        </div>
+      </section>
 
-              <Separator />
-
-              <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Name
-                  </label>
-                  <Input
-                    id="name"
-                    className="mt-2"
-                    value={fields.name}
-                    onChange={(event) =>
-                      setFields((prev) => ({ ...prev, name: event.target.value }))
-                    }
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="headline"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Headline
-                  </label>
-                  <Input
-                    id="headline"
-                    className="mt-2"
-                    value={fields.headline}
-                    onChange={(event) =>
-                      setFields((prev) => ({
-                        ...prev,
-                        headline: event.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="company"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Company
-                  </label>
-                  <Input
-                    id="company"
-                    className="mt-2"
-                    value={fields.company}
-                    onChange={(event) =>
-                      setFields((prev) => ({
-                        ...prev,
-                        company: event.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="location"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Location
-                  </label>
-                  <Input
-                    id="location"
-                    className="mt-2"
-                    value={fields.location}
-                    onChange={(event) =>
-                      setFields((prev) => ({
-                        ...prev,
-                        location: event.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="website"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Website
-                  </label>
-                  <Input
-                    id="website"
-                    className="mt-2"
-                    value={fields.website}
-                    onChange={(event) =>
-                      setFields((prev) => ({
-                        ...prev,
-                        website: event.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Email
-                  </label>
-                  <Input
-                    id="email"
-                    className="mt-2"
-                    value={fields.email}
-                    onChange={(event) =>
-                      setFields((prev) => ({
-                        ...prev,
-                        email: event.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="phone"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Phone
-                  </label>
-                  <Input
-                    id="phone"
-                    className="mt-2"
-                    value={fields.phone}
-                    onChange={(event) =>
-                      setFields((prev) => ({
-                        ...prev,
-                        phone: event.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="tagline"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Tagline
-                  </label>
-                  <Textarea
-                    id="tagline"
-                    className="mt-2 min-h-[88px]"
-                    value={fields.tagline}
-                    onChange={(event) =>
-                      setFields((prev) => ({
-                        ...prev,
-                        tagline: event.target.value,
-                      }))
-                    }
-                  />
-                </div>
-              </div>
-
-              <Separator />
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="show-name"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Show name
-                  </label>
-                  <Switch
-                    id="show-name"
-                    checked={fields.showName}
-                    onCheckedChange={(value) =>
-                      setFields((prev) => ({ ...prev, showName: value }))
-                    }
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="show-headline"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Show headline
-                  </label>
-                  <Switch
-                    id="show-headline"
-                    checked={fields.showHeadline}
-                    onCheckedChange={(value) =>
-                      setFields((prev) => ({ ...prev, showHeadline: value }))
-                    }
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="show-company"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Show company
-                  </label>
-                  <Switch
-                    id="show-company"
-                    checked={fields.showCompany}
-                    onCheckedChange={(value) =>
-                      setFields((prev) => ({ ...prev, showCompany: value }))
-                    }
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="show-location"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Show location
-                  </label>
-                  <Switch
-                    id="show-location"
-                    checked={fields.showLocation}
-                    onCheckedChange={(value) =>
-                      setFields((prev) => ({ ...prev, showLocation: value }))
-                    }
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="show-website"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Show website
-                  </label>
-                  <Switch
-                    id="show-website"
-                    checked={fields.showWebsite}
-                    onCheckedChange={(value) =>
-                      setFields((prev) => ({ ...prev, showWebsite: value }))
-                    }
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="show-email"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Show email
-                  </label>
-                  <Switch
-                    id="show-email"
-                    checked={fields.showEmail}
-                    onCheckedChange={(value) =>
-                      setFields((prev) => ({ ...prev, showEmail: value }))
-                    }
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="show-phone"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Show phone
-                  </label>
-                  <Switch
-                    id="show-phone"
-                    checked={fields.showPhone}
-                    onCheckedChange={(value) =>
-                      setFields((prev) => ({ ...prev, showPhone: value }))
-                    }
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="show-tagline"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Show tagline
-                  </label>
-                  <Switch
-                    id="show-tagline"
-                    checked={fields.showTagline}
-                    onCheckedChange={(value) =>
-                      setFields((prev) => ({ ...prev, showTagline: value }))
-                    }
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="show-footer"
-                    className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500"
-                  >
-                    Show footer
-                  </label>
-                  <Switch
-                    id="show-footer"
-                    checked={fields.showFooter}
-                    onCheckedChange={(value) =>
-                      setFields((prev) => ({ ...prev, showFooter: value }))
-                    }
-                  />
-                </div>
-              </div>
-
-              <Button
-                className="mt-2 h-11 w-full bg-zinc-900 text-white hover:bg-zinc-800"
-                onClick={handleExport}
-                disabled={isExporting}
-              >
-                {isExporting ? "Exporting..." : "Download PNG"}
-              </Button>
-            </div>
-          </Card>
-
-          <div className="flex flex-col gap-4">
+      {/* Generator Workspace */}
+      <section id="generator" className="mx-auto max-w-[1400px] px-6 pt-16">
+        <div className="grid gap-8 lg:grid-cols-[1fr_360px] items-start">
+          
+          {/* Preview Panel - Sticky */}
+          <div className="sticky top-20 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">
-                  Preview
-                </p>
-                <p className="text-sm text-zinc-500">
-                  {targetWidth} x {targetHeight} px
-                </p>
-              </div>
-              <Button
-                variant="outline"
-                className="border-black/20 bg-white/70"
-                onClick={() => setFields(initialFields)}
-              >
-                Reset
-              </Button>
+              <h2 className="text-sm font-mono font-bold uppercase tracking-widest text-zinc-900">Preview</h2>
+              <div className="text-xs font-mono text-zinc-500 bg-zinc-100 px-2 py-1 rounded">1584 x 396</div>
             </div>
-
-            <div className="rounded-[32px] border border-black/10 bg-white/70 p-4">
-              <div
-                ref={previewRef}
-                className="relative overflow-hidden"
-                style={{ aspectRatio: `${targetWidth} / ${targetHeight}` }}
-              >
-                <div
-                  className="absolute left-0 top-0"
-                  style={{
-                    width: `${targetWidth}px`,
-                    height: `${targetHeight}px`,
-                    transform: `scale(${previewScale})`,
-                    transformOrigin: "top left",
-                  }}
-                >
+            
+            <div className="rounded-xl border border-zinc-200 bg-white p-2 shadow-sm">
+              <div className="rounded-lg overflow-hidden border border-zinc-100 bg-zinc-50 relative">
+                <div ref={previewRef} className="w-full relative bg-zinc-100 flex items-center justify-center overflow-hidden" style={{ aspectRatio: `${targetWidth}/${targetHeight}` }}>
                   <div
-                    ref={bannerRef}
-                    className="h-full w-full"
-                    style={{ width: `${targetWidth}px`, height: `${targetHeight}px` }}
+                    style={{
+                      width: targetWidth,
+                      height: targetHeight,
+                      transform: `scale(${previewScale})`,
+                      transformOrigin: "top left",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                    }}
                   >
-                    <BannerPreview preset={preset} fields={fields} />
+                    <div ref={bannerRef} className="h-full w-full bg-white">
+                      <BannerPreview preset={preset} fields={fields} />
+                    </div>
                   </div>
                 </div>
-                <div className="pointer-events-none absolute inset-0 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.55)]" />
               </div>
             </div>
 
-            <div className="rounded-[24px] border border-black/10 bg-white/70 p-4 text-sm text-zinc-600">
-              Export tip: keep key text inside the center area. LinkedIn may
-              overlay the profile photo on the left.
+            <Button 
+              className="w-full bg-zinc-900 text-white hover:bg-zinc-800 font-mono"
+              size="lg"
+              onClick={handleExport}
+              disabled={isExporting}
+            >
+              {isExporting ? "Exporting..." : "Export to PNG"}
+            </Button>
+          </div>
+
+          {/* Settings Panel */}
+          <div className="flex flex-col gap-6">
+            <div className="rounded-xl border border-zinc-200 bg-white shadow-sm p-6">
+              <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 mb-4">Configuration</h3>
+              
+              <div className="space-y-6">
+                <div>
+                  <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 mb-2 block">
+                    Preset Theme
+                  </label>
+                  <Select value={selectedPreset} onValueChange={setSelectedPreset}>
+                    <SelectTrigger className="w-full rounded-md border-zinc-200 font-mono text-sm">
+                      <SelectValue placeholder="Choose preset" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {presets.map((item) => (
+                        <SelectItem key={item.id} value={item.id} className="font-mono text-sm">
+                          {item.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="mt-2 text-xs text-zinc-500 font-mono">{preset.description}</p>
+                </div>
+
+                <Separator className="bg-zinc-100" />
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 block">Name</label>
+                    <Switch checked={fields.showName} onCheckedChange={(c) => setFields(p => ({...p, showName: c}))} className="scale-75" />
+                  </div>
+                  {fields.showName && (
+                    <Input className="font-mono text-sm border-zinc-200" value={fields.name} onChange={(e) => setFields(p => ({...p, name: e.target.value}))} />
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 block">Headline</label>
+                    <Switch checked={fields.showHeadline} onCheckedChange={(c) => setFields(p => ({...p, showHeadline: c}))} className="scale-75" />
+                  </div>
+                  {fields.showHeadline && (
+                    <Input className="font-mono text-sm border-zinc-200" value={fields.headline} onChange={(e) => setFields(p => ({...p, headline: e.target.value}))} />
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 block">Tagline</label>
+                    <Switch checked={fields.showTagline} onCheckedChange={(c) => setFields(p => ({...p, showTagline: c}))} className="scale-75" />
+                  </div>
+                  {fields.showTagline && (
+                    <Textarea className="font-mono text-sm border-zinc-200 resize-none" rows={3} value={fields.tagline} onChange={(e) => setFields(p => ({...p, tagline: e.target.value}))} />
+                  )}
+                </div>
+
+                <Separator className="bg-zinc-100" />
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 block">Company</label>
+                    <Switch checked={fields.showCompany} onCheckedChange={(c) => setFields(p => ({...p, showCompany: c}))} className="scale-75" />
+                  </div>
+                  {fields.showCompany && (
+                    <Input className="font-mono text-sm border-zinc-200" value={fields.company} onChange={(e) => setFields(p => ({...p, company: e.target.value}))} />
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 block">Location</label>
+                    <Switch checked={fields.showLocation} onCheckedChange={(c) => setFields(p => ({...p, showLocation: c}))} className="scale-75" />
+                  </div>
+                  {fields.showLocation && (
+                    <Input className="font-mono text-sm border-zinc-200" value={fields.location} onChange={(e) => setFields(p => ({...p, location: e.target.value}))} />
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 block">Website</label>
+                    <Switch checked={fields.showWebsite} onCheckedChange={(c) => setFields(p => ({...p, showWebsite: c}))} className="scale-75" />
+                  </div>
+                  {fields.showWebsite && (
+                    <Input className="font-mono text-sm border-zinc-200" value={fields.website} onChange={(e) => setFields(p => ({...p, website: e.target.value}))} />
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 block">Email</label>
+                    <Switch checked={fields.showEmail} onCheckedChange={(c) => setFields(p => ({...p, showEmail: c}))} className="scale-75" />
+                  </div>
+                  {fields.showEmail && (
+                    <Input className="font-mono text-sm border-zinc-200" value={fields.email} onChange={(e) => setFields(p => ({...p, email: e.target.value}))} />
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 block">Phone</label>
+                    <Switch checked={fields.showPhone} onCheckedChange={(c) => setFields(p => ({...p, showPhone: c}))} className="scale-75" />
+                  </div>
+                  {fields.showPhone && (
+                    <Input className="font-mono text-sm border-zinc-200" value={fields.phone} onChange={(e) => setFields(p => ({...p, phone: e.target.value}))} />
+                  )}
+                </div>
+                
+                <Separator className="bg-zinc-100" />
+                
+                <div className="flex items-center justify-between gap-4 pt-2">
+                  <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 block">Show Watermark</label>
+                  <Switch checked={fields.showFooter} onCheckedChange={(c) => setFields(p => ({...p, showFooter: c}))} className="scale-75" />
+                </div>
+                
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

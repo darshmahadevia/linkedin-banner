@@ -26,26 +26,26 @@ type BannerPreviewProps = {
   fields: BannerFields;
 };
 
-const grainSvg =
-  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='0.35'/></svg>";
-
 const patternStyles: Record<BannerPreset["pattern"], CSSProperties> = {
-  grain: {
-    backgroundImage: `url("${grainSvg}")`,
-  },
+  none: {},
   grid: {
     backgroundImage:
-      "linear-gradient(90deg,rgba(0,0,0,0.25)_1px,transparent_1px),linear-gradient(0deg,rgba(0,0,0,0.25)_1px,transparent_1px)",
-    backgroundSize: "36px 36px",
-  },
-  rings: {
-    backgroundImage:
-      "radial-gradient(circle_at_15%_20%,rgba(255,255,255,0.4)_0,rgba(255,255,255,0)_45%),radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.35)_0,rgba(255,255,255,0)_40%)",
+      "linear-gradient(90deg,var(--tw-gradient-stops) 1px,transparent 1px),linear-gradient(0deg,var(--tw-gradient-stops) 1px,transparent 1px)",
+    backgroundSize: "24px 24px",
+    opacity: 0.1,
   },
   dots: {
-    backgroundImage: "radial-gradient(rgba(0,0,0,0.25)_1px,transparent_1px)",
-    backgroundSize: "18px 18px",
+    backgroundImage: "radial-gradient(var(--tw-gradient-stops) 1px,transparent 1px)",
+    backgroundSize: "16px 16px",
+    opacity: 0.15,
   },
+  cross: {
+    backgroundImage:
+      "linear-gradient(45deg,var(--tw-gradient-stops) 25%,transparent 25%,transparent 75%,var(--tw-gradient-stops) 75%,var(--tw-gradient-stops)),linear-gradient(45deg,var(--tw-gradient-stops) 25%,transparent 25%,transparent 75%,var(--tw-gradient-stops) 75%,var(--tw-gradient-stops))",
+    backgroundSize: "20px 20px",
+    backgroundPosition: "0 0, 10px 10px",
+    opacity: 0.05,
+  }
 };
 
 export default function BannerPreview({ preset, fields }: BannerPreviewProps) {
@@ -92,57 +92,76 @@ export default function BannerPreview({ preset, fields }: BannerPreviewProps) {
   };
 
   const metaStackStyles: Record<BannerPreset["layout"], string> = {
-    stack: "flex flex-col items-end gap-2 text-right text-[15px] font-medium",
-    split: "grid grid-cols-2 gap-x-6 gap-y-2 text-[13px] font-semibold",
-    center: "flex flex-col items-end gap-2 text-right text-[15px] font-medium",
+    stack: "flex flex-col items-end gap-2 text-right text-[14px]",
+    split: "grid grid-cols-2 gap-x-6 gap-y-2 text-[13px]",
+    center: "flex flex-col items-end gap-2 text-right text-[14px]",
   };
 
   const metaLabelStyles: Record<BannerPreset["layout"], string> = {
     stack: "",
-    split: "uppercase tracking-[0.2em] text-[10px] text-current/70",
+    split: "uppercase tracking-widest text-[10px] text-current/70 font-mono",
     center: "",
   };
 
   return (
-    <div className="relative h-full w-full">
+    <div className="relative h-full w-full bg-white font-sans antialiased overflow-hidden flex items-center justify-center">
       <div
-        className="absolute inset-0 overflow-hidden"
+        className="absolute inset-0 transition-colors duration-300"
         style={{
-          backgroundImage: preset.gradient,
+          background: preset.gradient,
           color: preset.text,
         }}
       >
-        <div className="absolute inset-0 opacity-[0.12] mix-blend-soft-light">
-          <div className="absolute inset-0" style={patternStyles[preset.pattern]} />
-        </div>
+        {preset.pattern !== "none" && (
+          <div
+            className="absolute inset-0 mix-blend-multiply dark:mix-blend-screen"
+            style={{
+              ...patternStyles[preset.pattern],
+              ["--tw-gradient-stops" as string]: preset.text,
+            }}
+          />
+        )}
 
         <div className="absolute inset-0">
-          {preset.frame === "ink" && (
-            <div className="pointer-events-none absolute inset-6 rounded-[22px] border border-black/40" />
+          {preset.frame === "border" && (
+            <div className="pointer-events-none absolute inset-6 rounded-xl border-2 border-current/10" />
           )}
-          {preset.frame === "paper" && (
-            <div className="pointer-events-none absolute inset-5 rounded-[22px] border border-black/10 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.6)]" />
+          {preset.frame === "browser" && (
+            <div className="pointer-events-none absolute inset-6 rounded-xl border border-current/10 bg-current/5 shadow-2xl backdrop-blur-sm overflow-hidden flex flex-col">
+              <div className="h-8 border-b border-current/10 flex items-center px-4 gap-2 opacity-50">
+                <div className="w-2.5 h-2.5 rounded-full bg-current" />
+                <div className="w-2.5 h-2.5 rounded-full bg-current" />
+                <div className="w-2.5 h-2.5 rounded-full bg-current" />
+              </div>
+            </div>
+          )}
+          {preset.frame === "terminal" && (
+             <div className="pointer-events-none absolute inset-6 rounded-lg border border-current/20 bg-black/40 shadow-inner flex flex-col">
+               <div className="h-7 border-b border-current/10 flex items-center px-3 gap-2">
+                 <span className="font-mono text-[10px] opacity-50 uppercase tracking-widest">~/banner</span>
+               </div>
+             </div>
           )}
         </div>
 
         <div
           className={`relative flex h-full flex-col justify-between ${layoutStyles[preset.layout]}`}
         >
-          <div className="pointer-events-none absolute left-0 top-0 h-full w-[320px] bg-gradient-to-r from-black/15 via-black/0 to-transparent" />
+          <div className="pointer-events-none absolute left-0 top-0 h-full w-[320px] bg-gradient-to-r from-current/5 via-current/0 to-transparent opacity-50" />
           {isCenter ? (
             <div className="flex flex-col items-center gap-6 text-center">
               {(hasTitle || fields.showTagline) && (
                 <div className="max-w-[70%]">
                   {fields.showName && (
                     <div
-                      className={`font-display ${nameStyles[preset.layout]} font-semibold leading-[1.05] tracking-tight`}
+                      className={`font-sans ${nameStyles[preset.layout]} font-bold tracking-tight`}
                     >
                       {fields.name}
                     </div>
                   )}
                   {fields.showHeadline && (
                     <div
-                      className={`mt-2 ${headlineStyles[preset.layout]} font-medium uppercase tracking-[0.24em]`}
+                      className={`mt-2 ${headlineStyles[preset.layout]} font-mono font-semibold uppercase tracking-widest`}
                       style={{ color: preset.accent }}
                     >
                       {fields.headline}
@@ -150,7 +169,7 @@ export default function BannerPreview({ preset, fields }: BannerPreviewProps) {
                   )}
                   {fields.showTagline && (
                     <div
-                      className="mt-5 text-[17px] leading-[1.55]"
+                      className="mt-5 text-[17px] leading-relaxed font-medium"
                       style={{ color: preset.softText }}
                     >
                       {fields.tagline}
@@ -160,14 +179,14 @@ export default function BannerPreview({ preset, fields }: BannerPreviewProps) {
               )}
               {centerMeta.length > 0 && (
                 <div
-                  className="flex flex-wrap items-center justify-center gap-3 text-[12px] font-semibold uppercase tracking-[0.2em]"
+                  className="flex flex-wrap items-center justify-center gap-3 text-[12px] font-mono font-medium uppercase tracking-widest"
                   style={{ color: preset.softText }}
                 >
                   {centerMeta.map((item, index) => (
                     <span key={`${item}-${index}`} className="flex items-center gap-3">
                       <span>{item}</span>
                       {index < centerMeta.length - 1 && (
-                        <span className="h-1 w-1 rounded-full bg-current" />
+                        <span className="h-1 w-1 bg-current opacity-40" />
                       )}
                     </span>
                   ))}
@@ -180,14 +199,14 @@ export default function BannerPreview({ preset, fields }: BannerPreviewProps) {
                 <div className="max-w-[65%]">
                   {fields.showName && (
                     <div
-                      className={`font-display ${nameStyles[preset.layout]} font-semibold leading-[1.05] tracking-tight`}
+                      className={`font-sans ${nameStyles[preset.layout]} font-bold tracking-tight`}
                     >
                       {fields.name}
                     </div>
                   )}
                   {fields.showHeadline && (
                     <div
-                      className={`mt-2 ${headlineStyles[preset.layout]} font-medium uppercase tracking-[0.24em]`}
+                      className={`mt-3 ${headlineStyles[preset.layout]} font-mono font-semibold uppercase tracking-widest`}
                       style={{ color: preset.accent }}
                     >
                       {fields.headline}
@@ -195,7 +214,7 @@ export default function BannerPreview({ preset, fields }: BannerPreviewProps) {
                   )}
                   {fields.showTagline && (
                     <div
-                      className="mt-5 max-w-[80%] text-[17px] leading-[1.55]"
+                      className="mt-6 max-w-[85%] text-[17px] leading-relaxed font-medium"
                       style={{ color: preset.softText }}
                     >
                       {fields.tagline}
@@ -204,7 +223,7 @@ export default function BannerPreview({ preset, fields }: BannerPreviewProps) {
                 </div>
               )}
               {hasMeta && (
-                <div className={metaStackStyles[preset.layout]} style={{ color: preset.softText }}>
+                <div className={`${metaStackStyles[preset.layout]} font-mono font-medium`} style={{ color: preset.softText }}>
                   {isSplit ? (
                     <>
                       {fields.showCompany && (
@@ -249,15 +268,15 @@ export default function BannerPreview({ preset, fields }: BannerPreviewProps) {
             <div className={`flex items-center ${footerRowAlignment}`}>
               {fields.showFooter && (
                 <div
-                  className="flex items-center gap-4 text-[14px] uppercase tracking-[0.32em]"
+                  className="flex items-center gap-4 text-[13px] font-mono font-bold uppercase tracking-widest"
                   style={{ color: preset.accent }}
                 >
-                  <span className="h-[1px] w-20 bg-current" />
+                  <span className="h-px w-12 bg-current" />
                   <span>LinkedIn Banner</span>
                 </div>
               )}
               {fields.showWebsite && (
-                <div className="text-[15px] font-semibold" style={{ color: preset.text }}>
+                <div className="text-[15px] font-mono font-medium" style={{ color: preset.text }}>
                   {fields.website}
                 </div>
               )}
@@ -265,7 +284,6 @@ export default function BannerPreview({ preset, fields }: BannerPreviewProps) {
           )}
         </div>
       </div>
-
     </div>
   );
 }
