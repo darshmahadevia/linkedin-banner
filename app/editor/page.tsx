@@ -39,6 +39,8 @@ const initialFields = {
   showEmail: true,
   showPhone: false,
   showFooter: true,
+  layoutOverride: "preset",
+  showSafeZone: true,
 };
 
 export default function EditorPage() {
@@ -49,14 +51,24 @@ export default function EditorPage() {
   const bannerRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const preset = useMemo(
-    () => presets.find((item) => item.id === selectedPreset) ?? presets[0],
-    [selectedPreset]
-  );
+  const preset = useMemo(() => {
+    const base = presets.find((item) => item.id === selectedPreset) ?? presets[0];
+    if (fields.layoutOverride && fields.layoutOverride !== "preset") {
+      return { ...base, layout: fields.layoutOverride as any };
+    }
+    return base;
+  }, [selectedPreset, fields.layoutOverride]);
 
   const handleExport = async () => {
     if (!bannerRef.current) return;
     setIsExporting(true);
+    // Hide safe zone before export
+    const previousSafeZone = fields.showSafeZone;
+    setFields(prev => ({ ...prev, showSafeZone: false }));
+    
+    // Give state time to update
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
     try {
       const dataUrl = await toPng(bannerRef.current, {
         cacheBust: true,
@@ -70,6 +82,7 @@ export default function EditorPage() {
       link.click();
     } finally {
       setIsExporting(false);
+      setFields(prev => ({ ...prev, showSafeZone: previousSafeZone }));
     }
   };
 
@@ -77,10 +90,19 @@ export default function EditorPage() {
     if (!containerRef.current) return;
     const updateScale = () => {
       if (!containerRef.current) return;
-      // Add some padding (e.g. 64px on each side)
-      const availableWidth = containerRef.current.offsetWidth - 128;
-      const nextScale = Math.min(1, availableWidth / targetWidth);
-      setPreviewScale(nextScale);
+      const isMobile = window.innerWidth < 1024;
+      const paddingX = isMobile ? 32 : 128;
+      const paddingY = isMobile ? 32 : 128;
+      
+      const availableWidth = containerRef.current.offsetWidth - paddingX;
+      const availableHeight = containerRef.current.offsetHeight - paddingY;
+      
+      const scaleX = availableWidth / targetWidth;
+      const scaleY = availableHeight / targetHeight;
+      
+      // Take the smaller scale to ensure it fits both horizontally and vertically
+      const nextScale = Math.min(1, scaleX, scaleY);
+      setPreviewScale(Math.max(0.1, nextScale));
     };
 
     updateScale();
@@ -89,13 +111,13 @@ export default function EditorPage() {
   }, []);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-zinc-50 text-zinc-900 selection:bg-zinc-900 selection:text-white overflow-hidden">
+    <div className="h-[100dvh] w-screen flex flex-col bg-zinc-50 text-zinc-900 selection:bg-zinc-900 selection:text-white overflow-hidden">
       {/* Editor Navbar */}
-      <nav className="h-14 border-b border-zinc-200 bg-white flex items-center justify-between px-6 shrink-0 z-10">
+      <nav className="h-14 border-b border-zinc-200 bg-white flex items-center justify-between px-4 sm:px-6 shrink-0 z-20">
         <div className="flex items-center gap-4">
           <Link href="/" className="font-mono text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:opacity-70 transition-opacity">
             <div className="w-4 h-4 bg-zinc-900 rounded-sm" />
-            Banner Studio
+            <span className="hidden sm:inline">Banner Studio</span>
           </Link>
         </div>
         
@@ -109,28 +131,48 @@ export default function EditorPage() {
         </Button>
       </nav>
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* Settings Sidebar (Left) */}
-        <aside className="w-[360px] h-full overflow-y-auto border-r border-zinc-200 bg-white shrink-0 scrollbar-hide custom-scrollbar">
-          <div className="p-6 flex flex-col gap-6">
+      <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
+        {/* Settings Sidebar (Left on Desktop, Bottom on Mobile) */}
+        <aside className="w-full lg:w-[360px] h-1/2 lg:h-full overflow-y-auto border-t lg:border-t-0 lg:border-r border-zinc-200 bg-white shrink-0 scrollbar-hide order-2 lg:order-1 relative z-10 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] lg:shadow-none">
+          <div className="p-5 lg:p-6 flex flex-col gap-6">
             <div className="space-y-6">
-              <div>
-                <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 mb-2 block">
-                  Preset Theme
-                </label>
-                <Select value={selectedPreset} onValueChange={setSelectedPreset}>
-                  <SelectTrigger className="w-full rounded-md border-zinc-200 font-mono text-sm h-10 shadow-sm focus:ring-1 focus:ring-zinc-900">
-                    <SelectValue placeholder="Choose preset" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {presets.map((item) => (
-                      <SelectItem key={item.id} value={item.id} className="font-mono text-sm">
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="mt-2 text-[11px] text-zinc-500 font-mono">{preset.description}</p>
+              
+              {/* Core Settings */}
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 mb-2 block">
+                    Preset Theme
+                  </label>
+                  <Select value={selectedPreset} onValueChange={setSelectedPreset}>
+                    <SelectTrigger className="w-full rounded-md border-zinc-200 font-mono text-sm h-10 shadow-sm focus:ring-1 focus:ring-zinc-900">
+                      <SelectValue placeholder="Choose preset" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {presets.map((item) => (
+                        <SelectItem key={item.id} value={item.id} className="font-mono text-sm">
+                          {item.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 mb-2 block">
+                    Layout Override
+                  </label>
+                  <Select value={fields.layoutOverride} onValueChange={(val) => setFields(p => ({...p, layoutOverride: val}))}>
+                    <SelectTrigger className="w-full rounded-md border-zinc-200 font-mono text-sm h-10 shadow-sm focus:ring-1 focus:ring-zinc-900">
+                      <SelectValue placeholder="Default (from preset)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="preset" className="font-mono text-sm">Default (Preset)</SelectItem>
+                      <SelectItem value="stack" className="font-mono text-sm">Stack Left</SelectItem>
+                      <SelectItem value="split" className="font-mono text-sm">Split Sides</SelectItem>
+                      <SelectItem value="center" className="font-mono text-sm">Center Aligned</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <Separator className="bg-zinc-100" />
@@ -219,26 +261,33 @@ export default function EditorPage() {
               
               <Separator className="bg-zinc-100" />
               
-              <div className="flex items-center justify-between gap-4 pt-2 pb-6">
-                <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 block">Show Watermark</label>
-                <Switch checked={fields.showFooter} onCheckedChange={(c) => setFields(p => ({...p, showFooter: c}))} className="scale-75 data-[state=checked]:bg-zinc-400" />
+              <div className="space-y-4 pb-6">
+                <div className="flex items-center justify-between gap-4">
+                  <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 block">Show Profile Picture Safe Zone</label>
+                  <Switch checked={fields.showSafeZone} onCheckedChange={(c) => setFields(p => ({...p, showSafeZone: c}))} className="scale-75 data-[state=checked]:bg-zinc-400" />
+                </div>
+                
+                <div className="flex items-center justify-between gap-4">
+                  <label className="text-xs font-mono font-bold uppercase tracking-widest text-zinc-500 block">Show Watermark</label>
+                  <Switch checked={fields.showFooter} onCheckedChange={(c) => setFields(p => ({...p, showFooter: c}))} className="scale-75 data-[state=checked]:bg-zinc-400" />
+                </div>
               </div>
               
             </div>
           </div>
         </aside>
 
-        {/* Canvas Area (Right) */}
+        {/* Canvas Area (Right on Desktop, Top on Mobile) */}
         <main 
           ref={containerRef}
-          className="flex-1 h-full flex flex-col relative bg-[#f9fafb]"
+          className="flex-1 h-1/2 lg:h-full flex flex-col relative bg-[#f9fafb] order-1 lg:order-2"
         >
           {/* subtle dot background for the canvas to look like a design tool */}
           <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]" />
           
-          <div className="flex-1 flex items-center justify-center p-8 relative z-10">
+          <div className="flex-1 flex items-center justify-center p-4 lg:p-8 relative z-10 overflow-hidden">
             <div 
-              className="rounded-xl overflow-hidden shadow-2xl shadow-zinc-900/10 ring-1 ring-zinc-200/50 bg-white"
+              className="rounded-xl overflow-hidden shadow-2xl shadow-zinc-900/10 ring-1 ring-zinc-200/50 bg-white relative"
               style={{
                 width: targetWidth * previewScale,
                 height: targetHeight * previewScale,
@@ -250,17 +299,27 @@ export default function EditorPage() {
                   height: targetHeight,
                   transform: `scale(${previewScale})`,
                   transformOrigin: "top left",
+                  position: "absolute",
+                  top: 0,
+                  left: 0
                 }}
               >
-                <div ref={bannerRef} className="h-full w-full bg-white">
+                <div ref={bannerRef} className="h-full w-full bg-white relative">
                   <BannerPreview preset={preset} fields={fields} />
+                  
+                  {/* LinkedIn Profile Picture Safe Zone Overlay */}
+                  {fields.showSafeZone && (
+                    <div className="absolute bottom-[-76px] left-[60px] w-[152px] h-[152px] rounded-full border-[6px] border-white bg-zinc-900/40 backdrop-blur-sm flex items-center justify-center pointer-events-none shadow-2xl">
+                      <span className="text-white text-xs font-mono font-bold uppercase tracking-widest text-center px-4 leading-tight opacity-90 drop-shadow-md">Profile Picture</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Footer Canvas Status */}
-          <div className="h-10 shrink-0 border-t border-zinc-200 bg-white/80 backdrop-blur flex items-center justify-between px-4 z-10">
+          {/* Footer Canvas Status (Hidden on mobile for more canvas space) */}
+          <div className="hidden lg:flex h-10 shrink-0 border-t border-zinc-200 bg-white/80 backdrop-blur items-center justify-between px-4 z-10">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
               <span className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest">Canvas Active</span>

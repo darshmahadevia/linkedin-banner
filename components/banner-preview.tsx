@@ -19,6 +19,8 @@ type BannerFields = {
   showEmail: boolean;
   showPhone: boolean;
   showFooter: boolean;
+  layoutOverride?: string;
+  showSafeZone?: boolean;
 };
 
 type BannerPreviewProps = {
