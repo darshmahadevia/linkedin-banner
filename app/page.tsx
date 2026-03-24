@@ -31,10 +31,34 @@ export default function LandingPage() {
       </motion.nav>
 
       {/* Hero */}
-      <main className="flex-1 flex items-center justify-center relative bg-white">
-        {/* Animated Background Grid */}
+      <main className="flex-1 flex items-center justify-center relative bg-white overflow-hidden">
+        {/* Animated Background Grid & Lines */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_20%,transparent_100%)]" />
         
+        {/* Animated Vertical Lines */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
+          <motion.div 
+            animate={{ translateY: ['-100%', '100%'] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            className="absolute left-[15%] top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-zinc-400 to-transparent"
+          />
+          <motion.div 
+            animate={{ translateY: ['100%', '-100%'] }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+            className="absolute left-[35%] top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-emerald-400 to-transparent"
+          />
+          <motion.div 
+            animate={{ translateY: ['-100%', '100%'] }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            className="absolute left-[65%] top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-zinc-400 to-transparent"
+          />
+          <motion.div 
+            animate={{ translateY: ['100%', '-100%'] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+            className="absolute left-[85%] top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-zinc-400 to-transparent"
+          />
+        </div>
+
         {/* Abstract Dynamic Shapes */}
         <motion.div 
           animate={{ 
@@ -85,7 +109,7 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-zinc-900 leading-[1.05] mb-6 sm:mb-8 max-w-4xl px-2"
           >
-            Dev&apos;s <br className="hidden sm:block"/> LinkedIn Customiser
+            LinkedIn <br className="hidden sm:block"/> Banner Studio
           </motion.h1>
           
           <motion.p 
@@ -103,8 +127,10 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto px-6 sm:px-0"
           >
-            <Link href="/editor" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto h-12 px-8 rounded-md bg-zinc-900 text-white hover:bg-zinc-800 font-mono text-sm shadow-xl shadow-zinc-900/20 transition-all hover:scale-105 active:scale-95">
+            <Link href="/editor" className="w-full sm:w-auto group relative">
+              {/* Glowing animated background */}
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-400 to-zinc-500 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+              <Button size="lg" className="relative w-full sm:w-auto h-12 px-8 rounded-md bg-zinc-900 text-white hover:bg-zinc-800 font-mono text-sm shadow-xl transition-all active:scale-95 border border-zinc-700/50 group-hover:border-zinc-500">
                 Start Building
               </Button>
             </Link>

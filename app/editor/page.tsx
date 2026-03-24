@@ -97,8 +97,6 @@ export default function EditorPage() {
             <div className="w-4 h-4 bg-zinc-900 rounded-sm" />
             Banner Studio
           </Link>
-          <div className="h-4 w-px bg-zinc-200" />
-          <span className="text-xs font-mono text-zinc-500">Untitled Workspace</span>
         </div>
         
         <Button 
