@@ -8,7 +8,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 selection:bg-zinc-900 selection:text-white flex flex-col overflow-hidden">
       {/* Navbar */}
-      <motion.nav 
+      <motion.nav
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
@@ -34,25 +34,25 @@ export default function LandingPage() {
       <main className="flex-1 flex items-center justify-center relative bg-white overflow-hidden">
         {/* Animated Background Grid & Lines */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_20%,transparent_100%)]" />
-        
+
         {/* Animated Vertical Lines */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
-          <motion.div 
+          <motion.div
             animate={{ translateY: ['-100%', '100%'] }}
             transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
             className="absolute left-[15%] top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-zinc-400 to-transparent"
           />
-          <motion.div 
+          <motion.div
             animate={{ translateY: ['100%', '-100%'] }}
             transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
             className="absolute left-[35%] top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-emerald-400 to-transparent"
           />
-          <motion.div 
+          <motion.div
             animate={{ translateY: ['-100%', '100%'] }}
             transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
             className="absolute left-[65%] top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-zinc-400 to-transparent"
           />
-          <motion.div 
+          <motion.div
             animate={{ translateY: ['100%', '-100%'] }}
             transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
             className="absolute left-[85%] top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-zinc-400 to-transparent"
@@ -60,35 +60,35 @@ export default function LandingPage() {
         </div>
 
         {/* Abstract Dynamic Shapes */}
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             rotate: [0, 90, 0],
             scale: [1, 1.05, 1],
             opacity: [0.3, 0.5, 0.3]
           }}
-          transition={{ 
-            duration: 20, 
-            repeat: Infinity, 
-            ease: "linear" 
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
           }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] md:w-[1000px] md:h-[600px] bg-zinc-200 blur-[120px] rounded-full mix-blend-multiply pointer-events-none" 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] md:w-[1000px] md:h-[600px] bg-zinc-200 blur-[120px] rounded-full mix-blend-multiply pointer-events-none"
         />
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             rotate: [0, -90, 0],
             scale: [1, 1.1, 1],
             opacity: [0.1, 0.2, 0.1]
           }}
-          transition={{ 
-            duration: 15, 
-            repeat: Infinity, 
-            ease: "easeInOut" 
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut"
           }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[300px] md:w-[600px] md:h-[400px] bg-emerald-100 blur-[100px] rounded-full mix-blend-multiply pointer-events-none" 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[300px] md:w-[600px] md:h-[400px] bg-emerald-100 blur-[100px] rounded-full mix-blend-multiply pointer-events-none"
         />
 
         <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 py-20 md:py-32 text-center flex flex-col items-center">
-          
+
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -99,11 +99,11 @@ export default function LandingPage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              Vercel Ready
+              For Developers
             </div>
           </motion.div>
-          
-          <motion.h1 
+
+          <motion.h1
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -111,8 +111,8 @@ export default function LandingPage() {
           >
             LinkedIn <br className="hidden sm:block"/> Banner Studio
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.3 }}
@@ -120,8 +120,8 @@ export default function LandingPage() {
           >
             A developer-focused tool to generate pixel-perfect, bold, and minimal LinkedIn banners. No design skills required. Create yours in seconds.
           </motion.p>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
