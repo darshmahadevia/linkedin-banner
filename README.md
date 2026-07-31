@@ -9,15 +9,6 @@ Generate LinkedIn banners with curated presets, live editing, and one-click PNG 
 - Toggle visibility for every banner element
 - PNG export at the correct 1584 x 396 LinkedIn banner size
 
-## Getting Started
-
-```bash
-npm install
-npm run dev
-```
-
-Open http://localhost:3000
-
 ## Usage
 
 1. Pick a preset in the left panel.
